@@ -19,6 +19,7 @@
     },
 
     rows: function() {
+      
       return _(_.range(this.get('n'))).map(function(rowIndex) {
         return this.get(rowIndex);
       }, this);
@@ -78,13 +79,42 @@
     // --------------------------------------------------------------
     //
     // test if a specific row on this board contains a conflict
+
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      // console.log("I'm running");
+    //set a variable called sum that would store the sum of the values in any given row
+    //iterate through the given row
+    // in each iteration, add the value of current iteration/index to the sum variable
+    //after iteration, check the value of sum is greater than 1
+    //if value of sum is greater than 1, return true. If not, return false.
+      var sum = 0;
+      _.each(this.get(rowIndex), function(item) {
+        sum += item;
+      });
+      if (sum > 1) {
+        return true;
+      } else {
+        return false;
+      }  
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      // iterate through each row
+      // for each row, call hasrowconflict at each row
+      // if rowconflict is true in any iteration, return true
+      //after full iteration over all rows, return false
+      var result = false;
+      var context = this;
+      // var hasRowConflictAt = this.hasRowConflictAt.bind(this);
+      _.each(this.rows(), function(item, index) {
+        
+        if (context.hasRowConflictAt(index)) {
+          result = true;
+        }
+      });
+      
+      return result;
     },
 
 
@@ -94,16 +124,49 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      //initialize a variable columnArray to store values in column index
+      //intialize variable columnSum that stores sum of all column values
+      //loop through all rows and push values at that column index to the column array
+      //loop through column array to get sum of values in the array
+      //if sum is greater than 1, return true. If not, return false
+      var columnArray = [];
+      var columnSum = 0;
+      _.each(this.rows(), function(item) {
+        columnArray.push(item[colIndex]);
+      });
+      _.each(columnArray, function(item) {
+        columnSum += item;
+      });
+      if (columnSum > 1) {
+        return true;
+      } else {
+        return false; // fixme
+
+      }
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      //use a for loop that iterates the number of rows length
+      // in each iteration, call hasColConflict at that index
+      // if the value of hasColConflict is true, then return true immediately
+      // following for loop, return false in the event that loop finishes without returning true
+      for ( var i = 0; i < this.rows().length; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
 
+    //  _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
+    //   return colIndex - rowIndex;
+    // },
 
+    // _getFirstRowColumnIndexForMinorDiagonalOn: function(rowIndex, colIndex) {
+    //   return colIndex + rowIndex;
+    // },
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
