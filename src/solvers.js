@@ -21,6 +21,8 @@ window.findNRooksSolution = function(n) {
   var newBoard = new Board({n : n});
   //create var to store number of pieces on newBoard
   var pieces = 0;
+  var currentRow = 0;
+  var currentCol = 0;
 
   //define a helper function to accept row, col
   var solve = function(row, col) {
@@ -44,8 +46,20 @@ window.findNRooksSolution = function(n) {
     } else if (pieces > n) {
       return solution;
     } else {
-      //toggle most recent row + 1, most recent col plus 1
-      newBoard.togglePiece(row + 1, col + 1);
+      // if col is less than n
+      if (currentCol < n - 1) {
+        //increment col
+        currentCol += 1;
+        //toggle piece of row, col
+        newBoard.togglePiece(currentRow, currentCol);
+      } else {
+        //set col to 0
+        currentCol = 0;
+        //increment row
+        currentRow += 1;
+        //toggle piece of row, col
+        newBoard.togglePiece(currentRow, currentCol);
+      }
       pieces += 1;
       //check if any conflicts
       if (!newBoard.hasAnyRooksConflicts()) {
@@ -55,8 +69,12 @@ window.findNRooksSolution = function(n) {
           solution = newBoard.rows();
           return;
         } else {
-          solve(row + 1, col + 1);
+          solve(currentRow, currentCol);
         }
+      } else {
+        newBoard.togglePiece(currentRow, currentCol);
+        pieces -= 1;
+        solve(currentRow, currentCol);
       }
     } 
   };
@@ -69,11 +87,84 @@ window.findNRooksSolution = function(n) {
 
 
 
-
-
 // return the number of nxn chessnewBoards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  //set a variable named solutionCount that will hold number of viable solutions
+  var solutionCount = 0; //fixme
+  // do a for loop for the rows and embed a second for loop for the columns
+  // after the second for loop, call the solve recursvie function on that specific row/column index
+  
+  var newBoard = new Board({n: n});
+  //create var to store number of pieces on newBoard
+  var pieces = 0;
+  var currentRow = 0;
+  var currentCol = 0;
+
+  //define a helper function to accept row, col
+  var solve = function(row, col) {
+    // toggle current row/col piece at index i, j
+    // if most recent row and col are both 0
+    if (pieces === 0) {
+      //toggle piece 0,0
+      newBoard.togglePiece(row, col);
+      //increment pieces
+      pieces += 1;
+      //check if any conflicts
+      if (!newBoard.hasAnyRooksConflicts()) {
+        //check if number of pieces on newBoard is equal to n
+        if (pieces === n) {
+          //set solution equal to newBoard
+          solutionCount += 1;
+          return;
+        } else {
+          solve(row, col);
+        }
+      }
+    } else if (pieces > n) {
+      return solutionCount;
+    } else {
+      // if col is less than n
+      if (currentCol < n - 1) {
+        //increment col
+        currentCol += 1;
+        //toggle piece of row, col
+        
+        newBoard.togglePiece(currentRow, currentCol);
+      } else {
+        //set col to 0
+        currentCol = 0;
+        //increment row
+        currentRow += 1;
+        //toggle piece of row, col
+        newBoard.togglePiece(currentRow, currentCol);
+      }
+      pieces += 1;
+      //check if any conflicts
+      if (!newBoard.hasAnyRooksConflicts()) {
+        //check if number of pieces on newBoard is equal to n
+        if (pieces === n) {
+          //return value
+          solutionCount += 1;
+          return;
+        } else {
+          solve(currentRow, currentCol);
+        }
+      } else {
+        newBoard.togglePiece(currentRow, currentCol);
+        pieces -= 1;
+        solve(currentRow, currentCol);
+      }
+    } 
+  };
+
+  for (var i = 0; i < n; i++) {
+    for (var j = 0; j < n; j++) {
+      pieces = 0;
+      currentCol = 0;
+      currentRow = 0;
+      solve(i, j);
+    }
+  }
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
